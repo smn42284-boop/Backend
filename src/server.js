@@ -7,9 +7,11 @@ const contactRoutes = require('./routes/contactRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const s3Routes = require('./routes/s3Routes');
 const app = express();
+const eventsRoutes = require('./routes/eventsRoutes');
 
 // Security middleware
 app.use(helmet());
+app.use('/api/events', eventsRoutes);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -20,8 +22,10 @@ app.use('/api/', limiter);
 app.use('/api/s3', s3Routes);
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true
+  origin: ['http://localhost:3000', 'https://ai-solution-sunderland.vercel.app'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
